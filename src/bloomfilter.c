@@ -16,7 +16,6 @@
 #define hash(key, keylen) XXH3_64bits(key, keylen)
 
 struct bloomfilter_s {
-    size_t size;
     volatile char data[BLOOMFILTER_SIZE_BYTE];
 };
 
@@ -42,13 +41,21 @@ static inline int reset(bloomfilter_t *filter, size_t key) {
 
 bloomfilter_t *bloomfilter_new(bloomfilter_allocator allocator)
 {
-    return allocator(sizeof(bloomfilter_t));
+    bloomfilter_t *filter = allocator(sizeof(bloomfilter_t));
+    memset(filter,0, sizeof(bloomfilter_t));
+    return filter;
 }
 void bloomfilter_destroy(bloomfilter_t **filter, bloomfilter_deallocator deallocators)
 {
     deallocators(*filter, sizeof(filter));
     *filter = NULL;
 }
+
+void bloomfilter_clear(bloomfilter_t *filter)
+{
+    memset(filter, 0, sizeof(bloomfilter_t));
+}
+
 void bloomfilter_add(bloomfilter_t *filter, const void *key, size_t keylen) {
     uint64_t hbase = hash(key, keylen);
     uint32_t h1 = (hbase >> 32) % BLOOMFILTER_SIZE;
@@ -93,3 +100,43 @@ void bloomfilter_shm_free(void *ptr, size_t size)
 {
 	munmap(ptr, size);
 }
+
+// SWAP
+struct bloomfilter_swap_s {
+    bloomfilter_t *active;
+    bloomfilter_t front;
+    bloomfilter_t back;
+};
+
+bloomfilter_swap_t *bloomfilterswap_new(bloomfilter_allocator allocator)
+{
+    bloomfilter_swap_t *filter = allocator(sizeof(bloomfilter_swap_t));
+    memset(&filter->front, 0xff, sizeof(bloomfilter_t));
+    memset(&filter->back, 0x00, sizeof(bloomfilter_t));
+    filter->active = &filter->front;
+    return filter;
+}
+void bloomfilterswap_destroy(bloomfilter_swap_t **swap, bloomfilter_deallocator deallocator)
+{
+    deallocator(*swap,sizeof(bloomfilter_swap_t));
+    *swap = NULL;
+}
+
+void bloomfilterswap_swap(bloomfilter_swap_t *filter) {
+    if(filter->active == &filter->front) {
+	filter->active = &filter->back;
+	bloomfilter_clear(&filter->front);
+    } else {
+	filter->active = &filter->front;
+	bloomfilter_clear(&filter->back);
+    }
+}
+
+void bloomfilterswap_add(bloomfilter_swap_t *filter, const void *key, size_t keylen) {
+    bloomfilter_add(&filter->front, key, keylen);
+    bloomfilter_add(&filter->back, key, keylen);
+}
+int bloomfilterswap_test(bloomfilter_swap_t *filter, const void *key, size_t keylen) {
+    return bloomfilter_test(filter->active, key, keylen);
+}
+

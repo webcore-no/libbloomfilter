@@ -1,4 +1,4 @@
-#include <bloomfilter.h>
+#include "../src/bloomfilter.h"
 #include <check.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +17,17 @@
 
 #define FCK_END \
 	        bloomfilter_destroy(&filter, bloomfilter_shm_free); \
+	} \
+	END_TEST
+
+#define FCK_SWAP_START(test_name) \
+	START_TEST(test_name) { \
+		bloomfilter_swap_t *filter;\
+		filter = bloomfilterswap_new(bloomfilter_shm_alloc);\
+		ck_assert_ptr_nonnull(filter);
+
+#define FCK_SWAP_END \
+	        bloomfilterswap_destroy(&filter, bloomfilter_shm_free); \
 	} \
 	END_TEST
 
@@ -45,7 +56,7 @@ FCK_START(test_bloomfilter_add_multi)
 }
 FCK_END
 
-FCK_START(test_bloomfilter_add_multi)
+FCK_START(test_bloomfilter_clear)
 {
     for(int i = 0; i < 100000; i++) {
         bloomfilter_add(filter, PTR(i));
@@ -58,11 +69,51 @@ FCK_START(test_bloomfilter_add_multi)
 }
 FCK_END
 
+// SWAP
+
+FCK_SWAP_START(test_bloomfilterswap_create)
+{}
+FCK_SWAP_END
+
+
+FCK_SWAP_START(test_bloomfilterswap_inital)
+{
+    // Check that everything returns true before swap
+    ck_assert_int_eq(1, bloomfilterswap_test(filter, STR("foobar")));
+}
+FCK_SWAP_END
+
+FCK_SWAP_START(test_bloomfilterswap_swap)
+{
+    bloomfilterswap_swap(filter);
+    // Check that the swaped value contains nothing
+    ck_assert_int_eq(0, bloomfilterswap_test(filter, STR("foobar")));
+}
+FCK_SWAP_END
+
+FCK_SWAP_START(test_bloomfilterswap_add_and_swap)
+{
+    bloomfilterswap_add(filter, STR("foobar"));
+    bloomfilterswap_swap(filter);
+    // Check that the swaped value contains nothing
+    ck_assert_int_eq(1, bloomfilterswap_test(filter, STR("foobar")));
+}
+FCK_SWAP_END
+
+FCK_SWAP_START(test_bloomfilterswap_swap_and_add)
+{
+    bloomfilterswap_swap(filter);
+    bloomfilterswap_add(filter, STR("foobar"));
+    // Check that the swaped value contains nothing
+    ck_assert_int_eq(1, bloomfilterswap_test(filter, STR("foobar")));
+}
+FCK_SWAP_END
 
 Suite *bloomfilter_suite(void)
 {
 	Suite *s;
 	TCase *tc_core;
+	TCase *tc_swap;
 
 	s = suite_create("bloomfilter");
 
@@ -71,7 +122,17 @@ Suite *bloomfilter_suite(void)
 	tcase_add_test(tc_core, test_bloomfilter_create);
 	tcase_add_test(tc_core, test_bloomfilter_add);
 	tcase_add_test(tc_core, test_bloomfilter_add_multi);
+	tcase_add_test(tc_core, test_bloomfilter_clear);
 	suite_add_tcase(s, tc_core);
+
+	tc_swap = tcase_create("Swap");
+	tcase_add_test(tc_swap, test_bloomfilterswap_create);
+	tcase_add_test(tc_swap, test_bloomfilterswap_inital);
+	tcase_add_test(tc_swap, test_bloomfilterswap_swap);
+	tcase_add_test(tc_swap, test_bloomfilterswap_add_and_swap);
+	tcase_add_test(tc_swap, test_bloomfilterswap_swap_and_add);
+	suite_add_tcase(s, tc_swap);
+
 	return s;
 }
 
