@@ -1,7 +1,7 @@
 # Libbloomfilter - A lock-less bloom filter implemented in c
 This library is optimized to achive ~0.05 error rate at 10 000 000 elements.
 ![Real_vs_theory](./docs/theory_vs_real.png)
-*Theoretical vs real performance for k=2 and n=2^28*
+*Theoretical vs real performance for ``k=2`` and ``n=2^28``*
 
 Theoretical error rate is calulated by [1]``(1-e^(-k*n/b))^k``
 
@@ -10,7 +10,7 @@ A bloom filter can vary on k keys used and n elemnts in hash table.
 
 xxh3 hash was used witch at the point of writinig is state of the art.
 
-In order the achive a error rate ~0.05 a ``n=28`` is required.
+In order the achive a error rate ~0.05 a ``n=2^28`` is required.
 
 ## Usage
 ### Allocators
