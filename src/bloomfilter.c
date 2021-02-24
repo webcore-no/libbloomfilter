@@ -9,7 +9,7 @@
 #include "xxhash.h"
 
 // 2^27
-#define BLOOMFILTER_SIZE 134217728
+#define BLOOMFILTER_SIZE 268435456
 #define BLOOMFILTER_SIZE_BYTE BLOOMFILTER_SIZE / sizeof(volatile char)
 
 #define hash(key, keylen) XXH3_64bits(key, keylen)
