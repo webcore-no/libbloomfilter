@@ -25,6 +25,9 @@ run_tests: tests/build/tests
 benchmark: tests/build/benchmark
 	tests/build/benchmark
 
+benchmark_swap: tests/build/benchmark_swap
+	tests/build/benchmark_swap
+
 examples/build/%: $(OBJECTS) example/%.c examples/build
 	$(CC) $(CFLAGS) -lcheck -lrt $^ -o $@
 

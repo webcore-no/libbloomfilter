@@ -139,12 +139,22 @@ void bloomfilterswap_swap(bloomfilter_swap_t *filter)
 void bloomfilterswap_add(bloomfilter_swap_t *filter, const void *key,
 			 size_t keylen)
 {
-	bloomfilter_add(&filter->front, key, keylen);
-	bloomfilter_add(&filter->back, key, keylen);
+	uint64_t hbase = hash(key, keylen);
+	uint32_t h1 = (hbase >> 32) % BLOOMFILTER_SIZE;
+	uint32_t h2 = hbase % BLOOMFILTER_SIZE;
+
+	set(&filter->front, h1);
+	set(&filter->front, h2);
+
+	set(&filter->back, h1);
+	set(&filter->back, h2);
 }
 int bloomfilterswap_test(bloomfilter_swap_t *filter, const void *key,
 			 size_t keylen)
 {
-	return bloomfilter_test(filter->active, key, keylen);
+	uint64_t hbase = hash(key, keylen);
+	uint32_t h1 = (hbase >> 32) % BLOOMFILTER_SIZE;
+	uint32_t h2 = hbase % BLOOMFILTER_SIZE;
+	return (get(filter->active, h1) && get(filter->active, h2));
 }
 
