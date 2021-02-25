@@ -3,7 +3,7 @@ This library is optimized to achive ~0.05 error rate at 10 000 000 elements.
 ![Real_vs_theory](./docs/theory_vs_real.png)
 *Theoretical vs real performance for ``k=2`` and ``n=2^28``*
 
-Theoretical error rate is calulated by [1]``(1-e^(-k*n/b))^k``
+Theoretical error rate is calulated by ``(1-e^(-k*n/b))^k``[1].
 
 A bloom filter can vary on k keys used and n elemnts in hash table.
 ``k=2`` was used mainly becuse it can be ceaply be achived by splitting a 64bit hash in two.
@@ -85,7 +85,11 @@ void bloomfilterswap_destroy(bloomfilter_swap_t **swap,
 ```c
 void bloomfilterswap_swap(bloomfilter_swap_t *filter);
 ```
-Swaps betwene active and passive filter and clear passive filter.
+Swaps betwene active and passive filter.
+```c
+void bloomfilterswap_clear(bloomfilter_swap_t *filter);
+```
+Clear passive filter.
 ```c
 void bloomfilterswap_add(bloomfilter_swap_t *filter, const void *key,
 			 size_t keylen);

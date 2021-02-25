@@ -34,8 +34,10 @@ bloomfilter_swap_t *bloomfilterswap_new(bloomfilter_allocator allocator);
 void bloomfilterswap_destroy(bloomfilter_swap_t **swap,
 			     bloomfilter_deallocator deallocator);
 
-//
+// swap active and passive filter
 void bloomfilterswap_swap(bloomfilter_swap_t *filter);
+// clear passive filter
+void bloomfilterswap_clear(bloomfilter_swap_t *filter);
 
 void bloomfilterswap_add(bloomfilter_swap_t *filter, const void *key,
 			 size_t keylen);

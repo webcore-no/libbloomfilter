@@ -14,7 +14,7 @@ void bloomfilterswap_destroy(bloomfilter_swap_t **swap,
 			     bloomfilter_deallocator deallocator);
 
 void bloomfilterswap_swap(bloomfilter_swap_t *filter);
-
+void bloomfilterswap_clear(bloomfilter_swap_t *filter);
 void bloomfilterswap_add(bloomfilter_swap_t *filter, const void *key,
 			 size_t keylen);
 
@@ -54,7 +54,9 @@ return function()
         swap = function()
             return C.bloomfilterswap_swap(filter[0])
         end,
-
+        clear = function()
+            return C.bloomfilterswap_clear(filter[0])
+        end,
         add = function(element)
             return string_check(filter[0], C.bloomfilterswap_add, element)
         end,

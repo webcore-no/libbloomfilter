@@ -129,10 +129,17 @@ void bloomfilterswap_swap(bloomfilter_swap_t *filter)
 {
 	if (filter->active == &filter->front) {
 		filter->active = &filter->back;
-		bloomfilter_clear(&filter->front);
 	} else {
 		filter->active = &filter->front;
+	}
+}
+
+void bloomfilterswap_clear(bloomfilter_swap_t *filter)
+{
+	if (filter->active == &filter->front) {
 		bloomfilter_clear(&filter->back);
+	} else {
+		bloomfilter_clear(&filter->front);
 	}
 }
 
