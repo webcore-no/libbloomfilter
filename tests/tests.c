@@ -109,6 +109,25 @@ FCK_SWAP_START(test_bloomfilterswap_swap_and_add)
 }
 FCK_SWAP_END
 
+FCK_SWAP_START(test_bloomfilterswap_clear)
+{
+	bloomfilterswap_add(filter, STR("foobar"));
+	bloomfilterswap_clear(filter);
+	ck_assert_int_eq(1, bloomfilterswap_test(filter, STR("foobar")));
+	bloomfilterswap_swap(filter);
+	ck_assert_int_eq(0, bloomfilterswap_test(filter, STR("foobar")));
+}
+FCK_SWAP_END
+
+FCK_SWAP_START(test_bloomfilterswap_noclear)
+{
+	bloomfilterswap_add(filter, STR("foobar"));
+	ck_assert_int_eq(1, bloomfilterswap_test(filter, STR("foobar")));
+	bloomfilterswap_swap(filter);
+	ck_assert_int_eq(1, bloomfilterswap_test(filter, STR("foobar")));
+}
+FCK_SWAP_END
+
 Suite *bloomfilter_suite(void)
 {
 	Suite *s;
@@ -131,6 +150,8 @@ Suite *bloomfilter_suite(void)
 	tcase_add_test(tc_swap, test_bloomfilterswap_swap);
 	tcase_add_test(tc_swap, test_bloomfilterswap_add_and_swap);
 	tcase_add_test(tc_swap, test_bloomfilterswap_swap_and_add);
+	tcase_add_test(tc_swap, test_bloomfilterswap_clear);
+	tcase_add_test(tc_swap, test_bloomfilterswap_noclear);
 	suite_add_tcase(s, tc_swap);
 
 	return s;
