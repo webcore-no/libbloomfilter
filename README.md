@@ -12,6 +12,35 @@ xxh3 hash was used witch at the point of writinig is state of the art.
 
 In order the achive a error rate ~0.05 a ``n=2^28`` is required.
 
+## Content
+``docs/`` contains misc docs
+
+``examples/`` contains example use in c
+
+``lua/`` contains lua ffi bindings
+
+``src/`` source code
+
+``tests/`` various testing tools including benchmarking(ops/s) and unit tests
+
+``tools/`` visualization tools
+
+## Installation
+xxhash[2] is needed to build, you install it or just.
+```bash
+cd src/
+wget https://raw.githubusercontent.com/Cyan4973/xxHash/dev/xxhash.h
+```
+To install run
+```bash
+make install
+```
+To run benshmarks and tests
+```bash
+make run_tests      # run unit tests
+make benchmark      # run benchmark
+make benchmark_swap # run swap benchmark
+```
 ## Usage
 ### Allocators
 ```c
@@ -102,19 +131,6 @@ http {
     }
 }
 ```
-## Content
-``docs/`` contains misc docs
-
-``examples/`` contains example use in c
-
-``lua/`` contains lua ffi bindings
-
-``src/`` source code
-
-``tests/`` various testing tools including benchmarking(ops/s) and unit tests
-
-``tools/`` visualization tools
-
-
 ## Sources
 - [1] [Wikipeida - Bloom_filter](https://en.wikipedia.org/wiki/Bloom_filter)
+- [2] [GitHub - Cyan4973/xxHash](https://github.com/Cyan4973/xxHash)
