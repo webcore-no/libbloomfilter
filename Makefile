@@ -15,9 +15,9 @@ EXSAMPLES := $(ESOURCE:example/%.c=example/build/%)
 
 all: build/libbloomfilter.so build/libbloomfilter.a tests examples
 
-tests: $(TESTS)
+tests: tests/build $(TESTS)
 
-examples: $(EXSAMPLES)
+examples: tests/build $(EXSAMPLES)
 
 run_tests: tests/build/tests
 	tests/build/tests
@@ -28,7 +28,7 @@ benchmark: tests/build/benchmark
 benchmark_swap: tests/build/benchmark_swap
 	tests/build/benchmark_swap
 
-examples/build/%: $(OBJECTS) example/%.c examples/build
+examples/build/%: $(OBJECTS) example/%.c
 	$(CC) $(CFLAGS) -lcheck -lrt $^ -o $@
 
 tests/build/%: $(OBJECTS) tests/%.c
