@@ -23,7 +23,7 @@ int bloomfilterswap_test(bloomfilter_swap_t *filter, const void *key,
 
 ]]
 
-local C = ffi.load("../build/libbloomfilter.so")
+local C = ffi.load("libbloomfilter.so")
 
 local bloomfilter_swap_t = ffi.typeof("bloomfilter_swap_t *[1]")
 
