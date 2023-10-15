@@ -1,16 +1,16 @@
 # Libbloomfilter - A lock-less bloom filter implemented in c
-This library is optimized to achive ~0.05 error rate at 10 000 000 elements.
+This library is optimized to achieve ~0.05 error rate at 10 000 000 elements.
 ![Real_vs_theory](./docs/theory_vs_real.png)
 *Theoretical vs real performance for ``k=2`` and ``n=2^28``*
 
 Theoretical error rate is calulated by ``(1-e^(-k*n/b))^k``[1].
 
 A bloom filter can vary on k keys used and n elemnts in hash table.
-``k=2`` was used mainly becuse it can be ceaply be achived by splitting a 64bit hash in two.
+``k=2`` was used mainly because it can be cheaply be achieved by splitting a 64bit hash in two.
 
-xxh3 hash was used witch at the point of writinig is state of the art.
+xxh3 hash was used which at the point of writing is state of the art.
 
-In order the achive a error rate ~0.05 a ``n=2^28`` is required.
+To achieve an error rate ~0.05 a ``n=2^28`` is required.
 
 ## Content
 ``docs/`` contains misc docs
@@ -35,7 +35,7 @@ To install run
 ```bash
 make install
 ```
-To run benshmarks and tests
+To run benchmarks and tests
 ```bash
 make run_tests      # run unit tests
 make benchmark      # run benchmark
@@ -59,7 +59,7 @@ SHM makes the filter shared over all processes forking from the process that
 creates the filter or swapfilter.
 ### Filter
 
-#### Contruction
+#### Construction
 ```c
 bloomfilter_t *bloomfilter_new(bloomfilter_allocator allocators);
 void bloomfilter_destroy(bloomfilter_t **filter,
@@ -76,7 +76,7 @@ int bloomfilter_test(bloomfilter_t *filter, const void *key, size_t keylen);
 ```c
 bloomfilter_swap_t *bloomfilterswap_new(bloomfilter_allocator allocator);
 ```
-Creates a set of filters, the active returing ``true`` to any test
+Creates a set of filters, the active returning ``true`` to any test
 ```c
 void bloomfilterswap_destroy(bloomfilter_swap_t **swap,
 			     bloomfilter_deallocator deallocator);
@@ -85,7 +85,7 @@ void bloomfilterswap_destroy(bloomfilter_swap_t **swap,
 ```c
 void bloomfilterswap_swap(bloomfilter_swap_t *filter);
 ```
-Swaps betwene active and passive filter.
+Swaps between active and passive filters.
 ```c
 void bloomfilterswap_clear(bloomfilter_swap_t *filter);
 ```
